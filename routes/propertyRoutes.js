@@ -6,6 +6,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const properties = await Property.find();
+        console.log(JSON.stringify(properties));
         res.json(properties);
     } catch (error) {
         res.status(500).json({ message: "Error fetching properties", error });
@@ -15,11 +16,11 @@ router.get("/", async (req, res) => {
 // POST a new property
 router.post("/", async (req, res) => {
     try {
-        const { title, location, price } = req.body;
-        if (!title || !location || !price) {
+        const { title, location, price, latitude, longitude } = req.body;
+        if (!title || !location || !price || !latitude || !longitude) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        const newProperty = new Property({ title, location, price });
+        const newProperty = new Property({ title, location, price, latitude, longitude });
         await newProperty.save();
         res.status(201).json({ message: "Property added successfully", property: newProperty });
     } catch (error) {
@@ -31,8 +32,8 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, location, price } = req.body;
-        const updatedProperty = await Property.findByIdAndUpdate(id, { title, location, price }, { new: true });
+        const { title, location, price, latitude, longitude } = req.body;
+        const updatedProperty = await Property.findByIdAndUpdate(id, { title, location, price, latitude, longitude }, { new: true });
         if (!updatedProperty) {
             return res.status(404).json({ message: "Property not found" });
         }
