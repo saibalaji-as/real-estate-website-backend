@@ -15,11 +15,11 @@ router.get("/", async (req, res) => {
 // POST a new property
 router.post("/", async (req, res) => {
     try {
-        const { title, location, price, latitude, longitude } = req.body;
-        if (!title || !location || !price || !latitude || !longitude) {
+        const { title, location, price, latitude, longitude, type, description, rooms, size, images } = req.body;
+        if (!title || !location || !price || !latitude || !longitude || !type || !description || !rooms || !size || !images.length) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        const newProperty = new Property({ title, location, price, latitude, longitude });
+        const newProperty = new Property({ title, location, price, latitude, longitude, type, description, rooms, size, images });
         await newProperty.save();
         res.status(201).json({ message: "Property added successfully", property: newProperty });
     } catch (error) {
