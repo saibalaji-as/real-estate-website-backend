@@ -6,7 +6,6 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const properties = await Property.find();
-        console.log(JSON.stringify(properties));
         res.json(properties);
     } catch (error) {
         res.status(500).json({ message: "Error fetching properties", error });
