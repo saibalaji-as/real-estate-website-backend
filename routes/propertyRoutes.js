@@ -5,7 +5,15 @@ const router = express.Router();
 // GET all properties
 router.get("/", async (req, res) => {
     try {
-        const properties = await Property.find();
+        let query = {};
+        
+        // If userId is provided in query params, filter by that userId
+        if (req.query.userId) {
+            query.userId = req.query.userId;
+        }
+        console.log("Query:", query);
+        console.log("Req:", req.query);
+        const properties = await Property.find(query);
         res.json(properties);
     } catch (error) {
         res.status(500).json({ message: "Error fetching properties", error });
@@ -15,11 +23,11 @@ router.get("/", async (req, res) => {
 // POST a new property
 router.post("/", async (req, res) => {
     try {
-        const { title, location, price, latitude, longitude, type, description, rooms, size, images } = req.body;
-        if (!title || !location || !price || !latitude || !longitude || !type || !description || !rooms || !size || !images.length) {
+        const { title, location, price, latitude, longitude, type, description, rooms, size, images, userId } = req.body;
+        if (!title || !location || !price || !latitude || !longitude || !type || !description || !rooms || !size || !images.length || !userId) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        const newProperty = new Property({ title, location, price, latitude, longitude, type, description, rooms, size, images });
+        const newProperty = new Property({ title, location, price, latitude, longitude, type, description, rooms, size, images, userId });
         await newProperty.save();
         res.status(201).json({ message: "Property added successfully", property: newProperty });
     } catch (error) {
@@ -31,8 +39,8 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, location, price, latitude, longitude } = req.body;
-        const updatedProperty = await Property.findByIdAndUpdate(id, { title, location, price, latitude, longitude }, { new: true });
+        const { title, location, price, latitude, longitude, type, description, rooms, size, images, userId } = req.body;
+        const updatedProperty = await Property.findByIdAndUpdate(id, { title, location, price, latitude, longitude, type, description, rooms, size, images, userId }, { new: true });
         if (!updatedProperty) {
             return res.status(404).json({ message: "Property not found" });
         }

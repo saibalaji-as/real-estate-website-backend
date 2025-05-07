@@ -11,6 +11,7 @@ const propertySchema = new mongoose.Schema({
     rooms: { type: Number }, // number of rooms
     description: { type: String },
     images: { type: [String]}, // multiple image URLs or Base64 strings
+    userId: {type: String}
 }, { timestamps: true });
 
 module.exports = mongoose.model("Property", propertySchema);
