@@ -2,9 +2,26 @@ const express = require("express");
 const Contact = require("../models/Contact");
 const router = express.Router();
 
+router.get("/all", async (req, res) => {
+    try {
+        let query = {};
+        
+        // If userId is provided in query params, filter by that userId
+        if (req.query.userId) {
+            query.userId = req.query.userId;
+        }
+        console.log("Query:", query);
+        console.log("Req:", req.query);
+        const properties = await Contact.find(query);
+        res.json(properties);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching properties", error });
+    }
+});
+
 router.post('/', async (req, res) => {
     try {
-        const { name, email, phone, address, city, state, country, zipCode, property } = req.body;
+        const { name, email, phone, address, city, state, country, zipCode, userId, property } = req.body;
 
         const newContact = new Contact({
             name,
@@ -15,6 +32,7 @@ router.post('/', async (req, res) => {
             state,
             country,
             zipCode,
+            userId,
             property
         });
 
